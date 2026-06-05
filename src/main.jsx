@@ -942,10 +942,20 @@ function RoomDetailsModal({ onClose, room }) {
 
 function CheckoutScreen({ bookingFor, onBack, onBookingForChange, onSubmit, selectedOffer }) {
   const { room, rate } = selectedOffer;
+  const [showCancellationTooltip, setShowCancellationTooltip] = React.useState(false);
+  const cancellationButtonRef = React.useRef(null);
+  const [openSelect, setOpenSelect] = React.useState(null);
+  const [checkInTime, setCheckInTime] = React.useState('00:00');
+  const [checkOutTime, setCheckOutTime] = React.useState('23:00');
+  const [bedPreference, setBedPreference] = React.useState('Не важно');
+
+  const checkInOptions = ['00:00 - бесплатно', '00:30 - бесплатно', '01:00 - бесплатно', '01:30 - бесплатно', '02:00 - бесплатно', '02:30 - бесплатно'];
+  const checkOutOptions = ['21:30 - бесплатно', '22:00 - бесплатно', '22:30 - бесплатно', '23:00 - бесплатно', '23:30 - 50 ₽ поздний выезд', '23:59 - 100 ₽ поздний выезд'];
+  const bedOptions = ['Не важно', 'Две односпальные кровати', 'Две полутороспальные кровати'];
 
   return (
     <>
-      <DesktopSectionHeader onBack={{ label: 'К услугам', handler: onBack }} title="Введите данные гостей" />
+      <DesktopSectionHeader onBack={{ label: 'К номерам', handler: onBack }} title="Введите данные гостей" />
       <div className="desktop-page-body desktop-checkout-layout">
         <div className="desktop-checkout-main">
           <div className="checkout-card guest-form-card desktop-checkout-card">
@@ -988,30 +998,76 @@ function CheckoutScreen({ bookingFor, onBack, onBookingForChange, onSubmit, sele
           </div>
 
           <div className="checkout-card guest-form-card desktop-checkout-card">
-            <h2>Введите данные гостей</h2>
-            <div className="desktop-form-grid desktop-form-grid-guests">
-              <TextField placeholder="Фамилия" showTooltip={false} />
-              <TextField placeholder="Имя" showTooltip={false} />
-              <TextField placeholder="Отчество" showTooltip={false} />
-              <div />
-              <TextField placeholder="Фамилия" showTooltip={false} />
-              <TextField placeholder="Имя" showTooltip={false} />
-              <TextField placeholder="Отчество" showTooltip={false} />
-            </div>
-          </div>
-
-          <div className="checkout-card guest-form-card desktop-checkout-card">
             <h2>Дополнительно</h2>
-            <div className="desktop-select-grid">
-              <SelectLikeField label="Заезд" value="00:00" />
-              <SelectLikeField label="Выезд" value="23:00" />
-              <SelectLikeField label="Кровати" value="Не важно" />
+            <div className="desktop-extra-section">
+              <h3>Время заезда и выезда</h3>
+              <div className="desktop-select-grid desktop-select-grid-times">
+                <DropdownField
+                  isOpen={openSelect === 'checkin'}
+                  label="Заезд"
+                  onSelect={(option) => {
+                    setCheckInTime(option.split(' - ')[0]);
+                    setOpenSelect(null);
+                  }}
+                  onToggle={() => setOpenSelect((prev) => (prev === 'checkin' ? null : 'checkin'))}
+                  options={checkInOptions}
+                  value={checkInTime}
+                />
+                <DropdownField
+                  isOpen={openSelect === 'checkout'}
+                  label="Выезд"
+                  onSelect={(option) => {
+                    setCheckOutTime(option.split(' - ')[0]);
+                    setOpenSelect(null);
+                  }}
+                  onToggle={() => setOpenSelect((prev) => (prev === 'checkout' ? null : 'checkout'))}
+                  options={checkOutOptions}
+                  value={checkOutTime}
+                />
+              </div>
+            </div>
+            <div className="desktop-extra-section desktop-extra-section-preferences">
+              <h3>Предпочтения</h3>
+              <div className="desktop-extra-note">Выполнение особых пожеланий не гарантируется</div>
+              <div className="desktop-select-grid desktop-select-grid-preferences">
+                <DropdownField
+                  isOpen={openSelect === 'beds'}
+                  label="Кровати"
+                  onSelect={(option) => {
+                    setBedPreference(option);
+                    setOpenSelect(null);
+                  }}
+                  onToggle={() => setOpenSelect((prev) => (prev === 'beds' ? null : 'beds'))}
+                  options={bedOptions}
+                  value={bedPreference}
+                />
+              </div>
             </div>
           </div>
 
           <div className="checkout-card guest-form-card desktop-checkout-card">
             <h2>Способ оплаты</h2>
-            <div className="desktop-payment-copy">Сейчас вы не платите за бронирование! Правила отмены бронирования</div>
+            <div className="desktop-payment-copy">
+              <span>Сейчас вы не платите за бронирование! </span>
+              <button
+                className="desktop-inline-link"
+                onClick={() => setShowCancellationTooltip((prev) => !prev)}
+                ref={cancellationButtonRef}
+                type="button"
+              >
+                Правила отмены бронирования
+              </button>
+            </div>
+            {showCancellationTooltip ? (
+              <InlineTooltip
+                anchor="feature"
+                anchorRef={cancellationButtonRef.current}
+                onClose={() => setShowCancellationTooltip(false)}
+                title={rate.tooltipDetails.cancellation.title}
+              >
+                {rate.tooltipDetails.cancellation.text}
+              </InlineTooltip>
+            ) : null}
             <div className="desktop-payment-card">
               <div className="desktop-payment-title">Гарантия банковской картой. {rate.payment}</div>
               <div className="desktop-payment-description">Сейчас вы ничего не платите. Укажите данные карты для гарантии бронирования.</div>
@@ -1036,9 +1092,6 @@ function SuccessScreen({ onBack }) {
           <SvgIcon className="success-icon" icon={validIcon} />
           <h2>Бронирование успешно создано</h2>
           <p>Это финальный экран сценария для UX-исследования.</p>
-          <Button form="round" onClick={onBack} size="m" variant="primary">
-            Вернуться к вариантам
-          </Button>
         </div>
       </div>
     </>
@@ -1065,7 +1118,6 @@ function BookingSidebar({ onSubmit, rate, room, showAction }) {
       <div className="desktop-booking-sidebar-section desktop-booking-sidebar-lines">
         <SummaryRow label="2 взрослых на основном месте" value="" />
         <SummaryRow label={rate.meal} value={rate.payment === 'Без предоплаты' ? 'Вкл.' : ''} />
-        <SummaryRow label={rate.cancellation} value="" />
         <SummaryRow accent label="Итого" value={formatPrice(rate.price)} />
         <div className="desktop-booking-sidebar-taxes">{rate.taxes}</div>
       </div>
@@ -1153,13 +1205,24 @@ function EmptyState({ onReset }) {
   );
 }
 
-function SelectLikeField({ label, value }) {
+function DropdownField({ isOpen, label, onSelect, onToggle, options, value }) {
   return (
-    <button className="desktop-select-like" type="button">
-      <span className="desktop-select-like-label">{label}</span>
-      <span className="desktop-select-like-value">{value}</span>
-      <span className="desktop-select-like-arrow">⌄</span>
-    </button>
+    <div className="desktop-dropdown-field-wrap">
+      <button className={`desktop-select-field ${isOpen ? 'desktop-select-field-open' : ''}`} onClick={onToggle} type="button">
+        <span className="desktop-select-like-label">{label}</span>
+        <span className="desktop-select-value">{value}</span>
+        <span className={`desktop-select-chevron ${isOpen ? 'desktop-select-chevron-open' : ''}`}>⌃</span>
+      </button>
+      {isOpen ? (
+        <div className="desktop-dropdown-menu">
+          {options.map((option) => (
+            <button className={`desktop-dropdown-option ${option === value ? 'desktop-dropdown-option-active' : ''}`} key={option} onClick={() => onSelect(option)} type="button">
+              <span>{option}</span>
+            </button>
+          ))}
+        </div>
+      ) : null}
+    </div>
   );
 }
 

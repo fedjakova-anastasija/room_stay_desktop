@@ -1066,7 +1066,7 @@ input {
   border: 1px solid #cfd8e5;
   border-radius: 10px;
   box-shadow: 0 1px 2px rgba(44, 65, 101, 0.16);
-  overflow: hidden;
+  overflow: visible;
 }
 
 .desktop-checkout-layout {
@@ -1214,19 +1214,56 @@ input {
   gap: 14px;
 }
 
-.desktop-select-grid .desktop-select-like:last-child {
+.desktop-extra-section {
+  padding-top: 10px;
+}
+
+.desktop-extra-section + .desktop-extra-section {
+  margin-top: 20px;
+  padding-top: 22px;
+  border-top: 1px solid #d7deea;
+}
+
+.desktop-extra-section h3 {
+  margin: 0 0 14px;
+  font-size: 18px;
+  font-weight: 400;
+  color: #404040;
+}
+
+.desktop-extra-note {
+  margin: -2px 0 14px;
+  color: #8a919d;
+  font-size: 14px;
+}
+
+.desktop-select-grid-preferences {
+  grid-template-columns: minmax(0, 1fr);
   max-width: calc(50% - 7px);
 }
 
-.desktop-select-like {
-  min-height: 50px;
+.desktop-dropdown-field-wrap {
+  position: relative;
+}
+
+.desktop-select-field {
+  width: 100%;
+  min-height: 52px;
   border-radius: 6px;
   border: 1px solid #ced7e4;
   background: #fff;
   padding: 8px 12px;
-  text-align: left;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: left;
   cursor: pointer;
+}
+
+.desktop-select-field-open {
+  border-color: #2d6bcc;
+  box-shadow: inset 0 0 0 1px #2d6bcc;
 }
 
 .desktop-select-like-label {
@@ -1235,24 +1272,70 @@ input {
   font-size: 14px;
 }
 
-.desktop-select-like-value {
-  display: block;
+.desktop-select-value {
   margin-top: 2px;
   font-size: 18px;
+  color: #404040;
 }
 
-.desktop-select-like-arrow {
+.desktop-select-chevron {
   position: absolute;
   right: 12px;
   top: 50%;
   transform: translateY(-50%);
   color: #2d6bcc;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.desktop-select-chevron-open {
+  transform: translateY(-50%) rotate(180deg);
+}
+
+.desktop-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  max-height: 190px;
+  overflow: auto;
+  background: #fff;
+  border: 1px solid #2d6bcc;
+  border-radius: 6px;
+  box-shadow: 0 4px 14px rgba(42, 66, 110, 0.2);
+  z-index: 10;
+}
+
+.desktop-dropdown-option {
+  width: 100%;
+  border: 0;
+  background: #fff;
+  padding: 12px 14px;
+  text-align: left;
+  font-size: 16px;
+  color: #505863;
+  cursor: pointer;
+}
+
+.desktop-dropdown-option:hover,
+.desktop-dropdown-option-active {
+  background: #f0f0f0;
 }
 
 .desktop-payment-copy,
 .desktop-payment-description {
   color: #505863;
   line-height: 1.35;
+}
+
+.desktop-inline-link {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: #205db8;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
 }
 
 .desktop-payment-card {
