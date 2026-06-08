@@ -4,8 +4,6 @@ import { createPortal } from 'react-dom';
 import {
   Button,
   Chip,
-  SegmentedButtons,
-  TextField,
   buttonWidthEnum,
 } from '../../Room stay/dist/dist/index.jsx';
 import '../../Room stay/dist/dist/theming/booking-form.css';
@@ -48,7 +46,6 @@ import galleryIcon from '../../Room stay/img/svg/gallery.svg?raw';
 
 const routes = {
   list: '#/desktop',
-  checkout: '#/desktop/checkout',
   success: '#/desktop/success',
 };
 
@@ -410,14 +407,8 @@ const rooms = [
   },
 ];
 
-const bookingForItems = [
-  { id: 'self', label: 'Для себя', value: 'self' },
-  { id: 'other', label: 'Для другого', value: 'other' },
-];
-
 function App() {
   const [route, setRoute] = React.useState(getRouteFromHash);
-  const [bookingFor, setBookingFor] = React.useState('self');
   const [activeFilters, setActiveFilters] = React.useState(initialFilterState);
   const [openFilterKey, setOpenFilterKey] = React.useState(null);
   const [rateDetails, setRateDetails] = React.useState(null);
@@ -451,7 +442,7 @@ function App() {
   const handleSelectRate = (room, rate, goCheckout = false) => {
     setSelectedOffer({ room, rate });
     if (goCheckout) {
-      window.location.hash = routes.checkout;
+      window.location.hash = routes.success;
     }
   };
 
@@ -533,18 +524,6 @@ function App() {
             </div>
           </div>
         </>
-      ) : route === 'checkout' ? (
-        <CheckoutScreen
-          bookingFor={bookingFor}
-          onBack={() => {
-            window.location.hash = routes.list;
-          }}
-          onBookingForChange={setBookingFor}
-          onSubmit={() => {
-            window.location.hash = routes.success;
-          }}
-          selectedOffer={selectedOffer}
-        />
       ) : (
         <SuccessScreen
           onBack={() => {
@@ -773,7 +752,7 @@ function RateCard({ onOpenDetails, onSelect, rate }) {
         <div className="desktop-rate-actions-row">
           <div className="tariff-button-wrap tariff-button-wrap-full">
             <Button form="round" onClick={onSelect} size="m" variant="primary" width={buttonWidthEnum.full}>
-              Забронировать
+              Выбрать
             </Button>
           </div>
         </div>
@@ -940,149 +919,6 @@ function RoomDetailsModal({ onClose, room }) {
   );
 }
 
-function CheckoutScreen({ bookingFor, onBack, onBookingForChange, onSubmit, selectedOffer }) {
-  const { room, rate } = selectedOffer;
-  const [showCancellationTooltip, setShowCancellationTooltip] = React.useState(false);
-  const cancellationButtonRef = React.useRef(null);
-  const [openSelect, setOpenSelect] = React.useState(null);
-  const [checkInTime, setCheckInTime] = React.useState('00:00');
-  const [checkOutTime, setCheckOutTime] = React.useState('23:00');
-  const [bedPreference, setBedPreference] = React.useState('Не важно');
-
-  const checkInOptions = ['00:00 - бесплатно', '00:30 - бесплатно', '01:00 - бесплатно', '01:30 - бесплатно', '02:00 - бесплатно', '02:30 - бесплатно'];
-  const checkOutOptions = ['21:30 - бесплатно', '22:00 - бесплатно', '22:30 - бесплатно', '23:00 - бесплатно', '23:30 - 50 ₽ поздний выезд', '23:59 - 100 ₽ поздний выезд'];
-  const bedOptions = ['Не важно', 'Две односпальные кровати', 'Две полутороспальные кровати'];
-
-  return (
-    <>
-      <DesktopSectionHeader onBack={{ label: 'К номерам', handler: onBack }} title="Введите данные гостей" />
-      <div className="desktop-page-body desktop-checkout-layout">
-        <div className="desktop-checkout-main">
-          <div className="checkout-card guest-form-card desktop-checkout-card">
-            <h2>Введите свои данные</h2>
-            <div className="field-caption">Я бронирую</div>
-            <div className="desktop-segmented-wrap">
-              <SegmentedButtons
-                fullWidth={false}
-                hasError={false}
-                items={bookingForItems}
-                name="booking-for"
-                onChangeAction={onBookingForChange}
-                value={bookingFor}
-              />
-            </div>
-
-            <div className="auth-copy">Авторизуйтесь удобным способом - данные заполнятся автоматически. Или введите их вручную.</div>
-
-            <div className="auth-icons-row desktop-auth-icons-align">
-              <div className="auth-icon vk">VK</div>
-              <div className="auth-icon tbank">T</div>
-              <div className="auth-icon sber">S</div>
-              <div className="auth-icon alfa">A</div>
-            </div>
-
-            <div className="desktop-form-grid">
-              <TextField defaultValue="Иванова" placeholder="Фамилия" showTooltip={false} />
-              <TextField defaultValue="Анна" placeholder="Имя" showTooltip={false} />
-              <TextField defaultValue="Сергеевна" placeholder="Отчество" showTooltip={false} />
-              <div />
-              <TextField defaultValue="+7 999 123-45-67" placeholder="Номер телефона" showTooltip={false} />
-              <TextField defaultValue="anna.ivanova@example.com" placeholder="Электронная почта" showTooltip={false} />
-            </div>
-
-            <div className="desktop-consent-list">
-              <CheckboxRow label="Пришлите мне подтверждение на телефон" />
-              <CheckboxRow label="Я даю согласие на получение специальных предложений и новостей" />
-              <CheckboxRow checked label="Я даю согласие на обработку персональных данных" />
-            </div>
-          </div>
-
-          <div className="checkout-card guest-form-card desktop-checkout-card">
-            <h2>Дополнительно</h2>
-            <div className="desktop-extra-section">
-              <h3>Время заезда и выезда</h3>
-              <div className="desktop-select-grid desktop-select-grid-times">
-                <DropdownField
-                  isOpen={openSelect === 'checkin'}
-                  label="Заезд"
-                  onSelect={(option) => {
-                    setCheckInTime(option.split(' - ')[0]);
-                    setOpenSelect(null);
-                  }}
-                  onToggle={() => setOpenSelect((prev) => (prev === 'checkin' ? null : 'checkin'))}
-                  options={checkInOptions}
-                  value={checkInTime}
-                />
-                <DropdownField
-                  isOpen={openSelect === 'checkout'}
-                  label="Выезд"
-                  onSelect={(option) => {
-                    setCheckOutTime(option.split(' - ')[0]);
-                    setOpenSelect(null);
-                  }}
-                  onToggle={() => setOpenSelect((prev) => (prev === 'checkout' ? null : 'checkout'))}
-                  options={checkOutOptions}
-                  value={checkOutTime}
-                />
-              </div>
-            </div>
-            <div className="desktop-extra-section desktop-extra-section-preferences">
-              <h3>Предпочтения</h3>
-              <div className="desktop-extra-note">Выполнение особых пожеланий не гарантируется</div>
-              <div className="desktop-select-grid desktop-select-grid-preferences">
-                <DropdownField
-                  isOpen={openSelect === 'beds'}
-                  label="Кровати"
-                  onSelect={(option) => {
-                    setBedPreference(option);
-                    setOpenSelect(null);
-                  }}
-                  onToggle={() => setOpenSelect((prev) => (prev === 'beds' ? null : 'beds'))}
-                  options={bedOptions}
-                  value={bedPreference}
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="checkout-card guest-form-card desktop-checkout-card">
-            <h2>Способ оплаты</h2>
-            <div className="desktop-payment-copy">
-              <span>Сейчас вы не платите за бронирование! </span>
-              <button
-                className="desktop-inline-link"
-                onClick={() => setShowCancellationTooltip((prev) => !prev)}
-                ref={cancellationButtonRef}
-                type="button"
-              >
-                Правила отмены бронирования
-              </button>
-            </div>
-            {showCancellationTooltip ? (
-              <InlineTooltip
-                anchor="feature"
-                anchorRef={cancellationButtonRef.current}
-                onClose={() => setShowCancellationTooltip(false)}
-                title={rate.tooltipDetails.cancellation.title}
-              >
-                {rate.tooltipDetails.cancellation.text}
-              </InlineTooltip>
-            ) : null}
-            <div className="desktop-payment-card">
-              <div className="desktop-payment-title">Гарантия банковской картой. {rate.payment}</div>
-              <div className="desktop-payment-description">Сейчас вы ничего не платите. Укажите данные карты для гарантии бронирования.</div>
-            </div>
-          </div>
-        </div>
-
-        <div className="desktop-checkout-side">
-          <BookingSidebar room={room} rate={rate} onSubmit={onSubmit} showAction />
-        </div>
-      </div>
-    </>
-  );
-}
-
 function SuccessScreen({ onBack }) {
   return (
     <>
@@ -1205,37 +1041,6 @@ function EmptyState({ onReset }) {
   );
 }
 
-function DropdownField({ isOpen, label, onSelect, onToggle, options, value }) {
-  return (
-    <div className="desktop-dropdown-field-wrap">
-      <button className={`desktop-select-field ${isOpen ? 'desktop-select-field-open' : ''}`} onClick={onToggle} type="button">
-        <span className="desktop-select-like-label">{label}</span>
-        <span className="desktop-select-value">{value}</span>
-        <span className={`desktop-select-chevron ${isOpen ? 'desktop-select-chevron-open' : ''}`}>⌃</span>
-      </button>
-      {isOpen ? (
-        <div className="desktop-dropdown-menu">
-          {options.map((option) => (
-            <button className={`desktop-dropdown-option ${option === value ? 'desktop-dropdown-option-active' : ''}`} key={option} onClick={() => onSelect(option)} type="button">
-              <span>{option}</span>
-            </button>
-          ))}
-        </div>
-      ) : null}
-    </div>
-  );
-}
-
-function CheckboxRow({ checked, label }) {
-  return (
-    <label className="desktop-checkbox-row">
-      <input defaultChecked={checked} type="checkbox" />
-      <span className="desktop-checkbox-control" />
-      <span>{label}</span>
-    </label>
-  );
-}
-
 function SummaryRow({ accent, label, value }) {
   return (
     <div className={`desktop-summary-row ${accent ? 'desktop-summary-row-accent' : ''}`}>
@@ -1263,9 +1068,6 @@ function scrollRates(node, offset) {
 
 function getRouteFromHash() {
   const hash = window.location.hash || routes.list;
-  if (hash === routes.checkout) {
-    return 'checkout';
-  }
   if (hash === routes.success) {
     return 'success';
   }
