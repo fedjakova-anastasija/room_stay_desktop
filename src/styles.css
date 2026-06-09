@@ -1462,6 +1462,17 @@ input {
   line-height: 1.4;
 }
 
+.desktop-success-note {
+  display: inline-block;
+  max-width: 560px;
+  padding: 14px 18px;
+  border-radius: 10px;
+  background: #eef4ff;
+  color: #1f2f47;
+  font-size: 18px;
+  line-height: 1.4;
+}
+
 .empty-state-card {
   background: #fff;
   border: 1px solid #cfd8e5;

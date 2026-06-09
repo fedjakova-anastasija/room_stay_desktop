@@ -928,6 +928,7 @@ function SuccessScreen({ onBack }) {
           <SvgIcon className="success-icon" icon={validIcon} />
           <h2>Бронирование успешно создано</h2>
           <p>Это финальный экран сценария для UX-исследования.</p>
+          <div className="desktop-success-note">Чтобы завершить тестирование, вернитесь на соседнюю вкладку.</div>
         </div>
       </div>
     </>
