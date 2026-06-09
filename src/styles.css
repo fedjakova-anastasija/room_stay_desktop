@@ -1465,12 +1465,15 @@ input {
 .desktop-success-note {
   display: inline-block;
   max-width: 560px;
-  padding: 14px 18px;
-  border-radius: 10px;
-  background: #eef4ff;
-  color: #1f2f47;
+  padding: 16px 20px;
+  border-radius: 12px;
+  border: 2px solid #2d6bcc;
+  background: #f3f7ff;
+  color: #17355d;
   font-size: 18px;
+  font-weight: 700;
   line-height: 1.4;
+  box-shadow: 0 4px 14px rgba(45, 107, 204, 0.18);
 }
 
 .empty-state-card {
