@@ -10,6 +10,7 @@ import '../../Room stay/dist/dist/theming/booking-form.css';
 import './styles.css';
 import standardRoomImage from '../../Room stay/img/638905038895238797-b2a3803f-0648-417b-959d-0f86c6768e8b.jpg';
 import suiteRoomImage from '../../Room stay/img/638905039312398814-82a5d543-224a-4524-8a0f-b513be82f9bc.jpg';
+import upgradedStandardRoomImage from './assets/3gbfhkirenyttb1ox9br0198ngv3089j.jpg';
 import mealIcon from '../../Room stay/img/svg/restaurant.svg?raw';
 import cancellationIcon from '../../Room stay/img/svg/unlock.svg?raw';
 import paymentIcon from '../../Room stay/img/svg/purse.svg?raw';
@@ -52,6 +53,7 @@ const routes = {
 const roomImages = {
   standard: standardRoomImage,
   suite: suiteRoomImage,
+  upgradedStandard: upgradedStandardRoomImage,
 };
 
 const filters = [
@@ -75,6 +77,18 @@ const filters = [
       { value: 'river', label: 'Вид на реку' },
     ],
   },
+  {
+    key: 'meal',
+    label: 'Питание',
+    type: 'multi',
+    scope: 'rate',
+    options: [
+      { value: 'none', label: 'Без питания' },
+      { value: 'breakfast', label: 'Завтрак' },
+      { value: 'halfBoard', label: 'Полупансион' },
+      { value: 'allInclusive', label: 'Все включено' },
+    ],
+  },
   { key: 'balcony', label: 'Балкон', type: 'single', scope: 'room' },
   { key: 'freeCancellation', label: 'Бесплатная отмена', type: 'single', scope: 'rate' },
   { key: 'noPrepayment', label: 'Без предоплаты', type: 'single', scope: 'rate' },
@@ -83,6 +97,7 @@ const filters = [
 const initialFilterState = {
   bedType: [],
   view: [],
+  meal: [],
   balcony: false,
   freeCancellation: false,
   noPrepayment: false,
@@ -91,18 +106,18 @@ const initialFilterState = {
 const rooms = [
   {
     id: 'suite',
-    image: roomImages.suite,
-    name: 'Люкс',
-    listTitle: 'Люкс',
+    image: roomImages.upgradedStandard,
+    name: 'Стандарт двухместный',
+    listTitle: 'Стандарт двухместный',
     params: '32 кв.м · до 3 мест',
     capacityLabel: 'Вместимость до 3 мест',
     area: '32 м²',
     roomCount: '1 комн.',
-    guests: '1 большая двуспальная кровать',
+    guests: '2 односпальные кровати',
     stockLabel: 'Остался 1 номер',
     photoCount: 5,
     filterTags: {
-      bedType: ['double'],
+      bedType: ['single'],
       view: ['mountain'],
       balcony: false,
     },
@@ -110,7 +125,7 @@ const rooms = [
     detailFeatureBadges: [
       { icon: viewDetailIcon, label: 'Вид из окна' },
       { icon: airConditioningDetailIcon, label: 'Кондиционер' },
-      { icon: kingBedDetailIcon, label: 'Большая двуспальная кровать' },
+      { icon: singleBedIcon, label: 'Две односпальные кровати' },
       { icon: wifiDetailIcon, label: 'Wi-Fi' },
       { icon: lockDetailIcon, label: 'Электронный замок' },
     ],
@@ -119,7 +134,7 @@ const rooms = [
     detailSections: [
       {
         title: 'Размещение',
-        items: ['Большая двуспальная кровать', 'Поздний выезд по запросу'],
+        items: ['Две односпальные кровати', 'Поздний выезд по запросу'],
       },
       {
         title: 'Оборудование и электроника',
@@ -135,6 +150,7 @@ const rooms = [
       {
         id: 'suite-basic-prepay',
         meal: 'Питание не включено',
+        mealKey: 'none',
         cancellation: 'Бесплатная отмена',
         payment: 'Нужна предоплата',
         price: 8000,
@@ -162,6 +178,7 @@ const rooms = [
       {
         id: 'suite-breakfast-flex',
         meal: 'Завтрак',
+        mealKey: 'breakfast',
         cancellation: 'Условия отмены',
         payment: 'Без предоплаты',
         price: 9600,
@@ -189,6 +206,7 @@ const rooms = [
       {
         id: 'suite-breakfast-premium',
         meal: 'Завтрак',
+        mealKey: 'breakfast',
         cancellation: 'Условия отмены',
         payment: 'Без предоплаты',
         price: 12000,
@@ -214,6 +232,7 @@ const rooms = [
       {
         id: 'suite-all-inclusive-flex',
         meal: 'Питание «Все включено»',
+        mealKey: 'allInclusive',
         cancellation: 'Бесплатная отмена',
         payment: 'Без предоплаты',
         price: 13200,
@@ -232,6 +251,7 @@ const rooms = [
       {
         id: 'suite-breakfast-prepay',
         meal: 'Завтрак',
+        mealKey: 'breakfast',
         cancellation: 'Бесплатная отмена',
         payment: 'Нужна предоплата',
         price: 10400,
@@ -250,8 +270,8 @@ const rooms = [
   {
     id: 'standard-family',
     image: roomImages.standard,
-    name: 'Трёхместный семейный номер Standard',
-    listTitle: '2 × Трёхместный семейный номер Standard',
+    name: 'Стандарт улучшенный',
+    listTitle: 'Стандарт улучшенный',
     params: '30 кв.м · до 5 мест',
     capacityLabel: 'Вместимость до 5 мест',
     area: '30 м²',
@@ -293,6 +313,7 @@ const rooms = [
       {
         id: 'standard-basic-flex',
         meal: 'Питание не включено',
+        mealKey: 'none',
         cancellation: 'Бесплатная отмена',
         payment: 'Без предоплаты',
         price: 2600,
@@ -320,6 +341,7 @@ const rooms = [
       {
         id: 'standard-basic-prepay',
         meal: 'Завтрак "Английский"',
+        mealKey: 'breakfast',
         cancellation: 'Условия отмены',
         payment: 'Нужна предоплата',
         price: 3400,
@@ -347,6 +369,7 @@ const rooms = [
       {
         id: 'standard-breakfast',
         meal: 'Питание «Все включено»',
+        mealKey: 'allInclusive',
         cancellation: 'Бесплатная отмена',
         payment: 'Без предоплаты',
         price: 4000,
@@ -372,6 +395,7 @@ const rooms = [
       {
         id: 'standard-half-board',
         meal: 'Полупансион (завтрак и ужин)',
+        mealKey: 'halfBoard',
         cancellation: 'Бесплатная отмена',
         payment: 'Без предоплаты',
         price: 4200,
@@ -390,6 +414,7 @@ const rooms = [
       {
         id: 'standard-breakfast-prepay-plus',
         meal: 'Завтрак',
+        mealKey: 'breakfast',
         cancellation: 'Условия отмены',
         payment: 'Нужна предоплата',
         price: 3600,
@@ -483,29 +508,22 @@ function App() {
                       setOpenFilterKey((prev) => (prev === chipFilter.key ? null : chipFilter.key));
                     }}
                     open={openFilterKey === filter.key}
+                    onToggleOption={(filterKey, optionValue) => {
+                      setActiveFilters((prev) => {
+                        const nextValues = prev[filterKey].includes(optionValue)
+                          ? prev[filterKey].filter((value) => value !== optionValue)
+                          : [...prev[filterKey], optionValue];
+
+                        return {
+                          ...prev,
+                          [filterKey]: nextValues,
+                        };
+                      });
+                    }}
                     value={activeFilters[filter.key]}
                   />
                 ))}
               </div>
-
-              {openFilterKey ? (
-                <FilterDropdown
-                  filter={filters.find((filter) => filter.key === openFilterKey)}
-                  onToggleOption={(filterKey, optionValue) => {
-                    setActiveFilters((prev) => {
-                      const nextValues = prev[filterKey].includes(optionValue)
-                        ? prev[filterKey].filter((value) => value !== optionValue)
-                        : [...prev[filterKey], optionValue];
-
-                      return {
-                        ...prev,
-                        [filterKey]: nextValues,
-                      };
-                    });
-                  }}
-                  selectedValues={activeFilters[openFilterKey]}
-                />
-              ) : null}
             </div>
 
             <div className="desktop-room-list">
@@ -928,7 +946,7 @@ function SuccessScreen({ onBack }) {
           <SvgIcon className="success-icon" icon={validIcon} />
           <h2>Бронирование успешно создано</h2>
           <p>Это финальный экран сценария для UX-исследования.</p>
-          <div className="desktop-success-note">Чтобы завершить тестирование, вернитесь на соседнюю вкладку.</div>
+          <div className="desktop-success-note">Чтобы завершить тестирование, вернитесь на соседнюю вкладку и ответьте на несколько вопросов.</div>
         </div>
       </div>
     </>
@@ -974,7 +992,7 @@ function BookingSidebar({ onSubmit, rate, room, showAction }) {
   );
 }
 
-function FilterChip({ active, filter, onClear, onClick, open, value }) {
+function FilterChip({ active, filter, onClear, onClick, onToggleOption, open, value }) {
   const count = Array.isArray(value) ? value.length : 0;
   const label = filter.type === 'multi' && count > 0 ? `${filter.label}: ${count}` : filter.label;
 
@@ -1002,6 +1020,10 @@ function FilterChip({ active, filter, onClear, onClick, open, value }) {
         onClick={() => onClick(filter)}
         selected={active || open}
       />
+
+      {open && filter.type === 'multi' ? (
+        <FilterDropdown filter={filter} onToggleOption={onToggleOption} selectedValues={value} />
+      ) : null}
     </div>
   );
 }
@@ -1092,6 +1114,10 @@ function matchesRoomFilters(room, activeFilters) {
 }
 
 function matchesRateFilters(rate, activeFilters) {
+  if (activeFilters.meal.length > 0 && !activeFilters.meal.includes(rate.mealKey)) {
+    return false;
+  }
+
   if (activeFilters.freeCancellation && rate.cancellation !== 'Бесплатная отмена') {
     return false;
   }

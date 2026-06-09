@@ -283,6 +283,7 @@ input {
 
 .desktop-filter-chip-wrap {
   flex: 0 0 auto;
+  position: relative;
 }
 
 .desktop-filter-chip {
@@ -328,7 +329,7 @@ input {
 .desktop-filter-dropdown {
   position: absolute;
   top: calc(100% + 6px);
-  left: 20px;
+  left: 0;
   background: #fff;
   border: 1px solid #b7c5da;
   border-radius: 4px;
